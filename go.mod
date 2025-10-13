@@ -5,6 +5,7 @@ go 1.25
 require (
 	dario.cat/mergo v1.0.2
 	github.com/AlekSi/pointer v1.2.0
+	github.com/DataDog/zstd v1.5.5
 	github.com/Masterminds/semver/v3 v3.4.0
 	github.com/ProtonMail/go-crypto v1.3.0
 	github.com/ProtonMail/gopenpgp/v2 v2.7.1
@@ -26,7 +27,6 @@ require (
 )
 
 require (
-	github.com/DataDog/zstd v1.5.5 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/sprig/v3 v3.3.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect

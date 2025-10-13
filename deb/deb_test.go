@@ -1165,9 +1165,10 @@ func TestCompressionAlgorithms(t *testing.T) {
 		{"none", "data.tar", ""},
 		{"zstd", "data.tar.zst", ""},
 		{"zstd:1", "data.tar.zst", ""},
+		{"zstd:9", "data.tar.zst", ""},
 		{"zstd:19", "data.tar.zst", ""},
-		{"zstd:best", "data.tar.zst", ""},
-		{"zstd:bar", "data.tar.zst", "invalid zstd compressor level"},
+		{"zstd:22", "data.tar.zst", ""},
+		{"zstd:bar", "data.tar.zst", "parse zstd compressor level"},
 		{"foo", "data.tar", "unknown compression algorithm"},
 		{"foo:bar:baz", "data.tar", "malformed compressor setting"},
 	}

@@ -20,6 +20,7 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/DataDog/zstd"
 	"github.com/blakesmith/ar"
 	"github.com/goreleaser/chglog"
 	"github.com/goreleaser/nfpm/v2"
@@ -28,7 +29,6 @@ import (
 	"github.com/goreleaser/nfpm/v2/internal/maps"
 	"github.com/goreleaser/nfpm/v2/internal/modtime"
 	"github.com/goreleaser/nfpm/v2/internal/sign"
-	"github.com/klauspost/compress/zstd"
 	"github.com/ulikunitz/xz"
 )
 
@@ -370,22 +370,15 @@ func createDataTarball(info *nfpm.Info) (dataTarBall, md5sums []byte,
 		}
 		name = "data.tar.xz"
 	case "zstd":
-		level := zstd.SpeedBetterCompression
+		level := 7
 		if compressorLevel != "" {
-			if intLevel, err := strconv.Atoi(compressorLevel); err == nil {
-				level = zstd.EncoderLevelFromZstd(intLevel)
-			} else {
-				var ok bool
-				ok, level = zstd.EncoderLevelFromString(compressorLevel)
-				if !ok {
-					return nil, nil, 0, "", fmt.Errorf("invalid zstd compressor level: %s", compressorLevel)
-				}
+			var err error
+			level, err = strconv.Atoi(compressorLevel)
+			if err != nil {
+				return nil, nil, 0, "", fmt.Errorf("parse zstd compressor level: %w", err)
 			}
 		}
-		dataTarballWriteCloser, err = zstd.NewWriter(&dataTarball, zstd.WithEncoderLevel(level))
-		if err != nil {
-			return nil, nil, 0, "", err
-		}
+		dataTarballWriteCloser = zstd.NewWriterLevel(&dataTarball, level)
 		name = "data.tar.zst"
 	case "none":
 		dataTarballWriteCloser = nopCloser{Writer: &dataTarball}
