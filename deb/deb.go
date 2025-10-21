@@ -22,6 +22,7 @@ import (
 
 	"github.com/DataDog/zstd"
 	"github.com/blakesmith/ar"
+	"github.com/foobaz/go-zopfli/zopfli"
 	"github.com/goreleaser/chglog"
 	"github.com/goreleaser/nfpm/v2"
 	"github.com/goreleaser/nfpm/v2/deprecation"
@@ -322,6 +323,25 @@ type nopCloser struct {
 
 func (nopCloser) Close() error { return nil }
 
+type zopfliWriter struct {
+	io.Writer
+	opts zopfli.Options
+	b    bytes.Buffer
+	w    io.Writer
+}
+
+func (zw *zopfliWriter) Write(p []byte) (n int, err error) {
+	return zw.b.Write(p)
+}
+
+func (zw *zopfliWriter) Close() error {
+	return zopfli.GzipCompress(&zw.opts, zw.b.Bytes(), zw.w)
+}
+
+func zopfliNewWriter(w io.Writer) *zopfliWriter {
+	return &zopfliWriter{opts: zopfli.DefaultOptions(), w: w}
+}
+
 func createDataTarball(info *nfpm.Info) (dataTarBall, md5sums []byte,
 	instSize int64, name string, err error,
 ) {
@@ -355,7 +375,11 @@ func createDataTarball(info *nfpm.Info) (dataTarBall, md5sums []byte,
 				return nil, nil, 0, "", fmt.Errorf("parse gzip compressor level: %w", err)
 			}
 		}
-		dataTarballWriteCloser, err = gzip.NewWriterLevel(&dataTarball, level)
+		if level > 9 {
+			dataTarballWriteCloser = zopfliNewWriter(&dataTarball)
+		} else {
+			dataTarballWriteCloser, err = gzip.NewWriterLevel(&dataTarball, level)
+		}
 		if err != nil {
 			return nil, nil, 0, "", err
 		}

@@ -11,6 +11,7 @@ require (
 	github.com/ProtonMail/gopenpgp/v2 v2.7.1
 	github.com/blakesmith/ar v0.0.0-20190502131153-809d4375e1fb
 	github.com/caarlos0/go-version v0.2.2
+	github.com/foobaz/go-zopfli v0.0.0-20140122214029-7432051485e2
 	github.com/google/rpmpack v0.7.1
 	github.com/goreleaser/chglog v0.7.3
 	github.com/goreleaser/fileglob v1.4.0

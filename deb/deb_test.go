@@ -1158,6 +1158,7 @@ func TestCompressionAlgorithms(t *testing.T) {
 		{"gzip", "data.tar.gz", ""},
 		{"gzip:1", "data.tar.gz", ""},
 		{"gzip:9", "data.tar.gz", ""},
+		{"gzip:11", "data.tar.gz", ""},
 		{"gzip:foo", "data.tar.gz", "parse gzip compressor level"},
 		{"", "data.tar.gz", ""}, // test current default
 		{"xz", "data.tar.xz", ""},
